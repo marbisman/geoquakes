@@ -3,7 +3,7 @@ var weekly_quakes_endpoint = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/s
 var map;
 //
 $(document).ready(function() {
-  console.log("Let's get coding!");
+  //console.log("Let's get coding!");
 
 
 function getData(){
@@ -13,48 +13,54 @@ function getData(){
     success: onSuccess,
     datatype: 'json',
     error: onError,
-  });
-}
+  }); //closing ajax
+} // closing getData function
+getData();
 
-  function onSuccess(responseData){
-    console.log(responseData);
+function onSuccess(responseData){
+  //console.log(responseData);
+  createMap();
+  //dropPins({lat: 37.78,lng: -121.44}, "gdmp");
+  //dropPins({lat: 39.78,lng: -121.44}, "Hello");
 
-
-    var features = responseData.features[0].properties.title;
-    console.log(features);
+  var features = responseData.features[0].properties.title;
+  //console.log(features);
     for (i=0; i < responseData.features.length;i++){
       var title = responseData.features[i].properties.title;
       var latitude = responseData.features[i].geometry.coordinates[0];
       var longitude = responseData.features[i].geometry.coordinates[1];
-      $('#info').append('<p>' + title + '</p>');
-      createMap();
-      }
-    }
+      //console.log(latitude);
+      //console.log(longitude);
+      var ll = {
+        lat: latitude,
+        lng: longitude
+    };
 
-  function onError(responseData){
-        console.log("Error");
+      //console.log(ll);
+      //console.log(typeof(ll));
+      dropPins(ll, title);
+      $('#info').append('<p>' + title + '</p>');
 
   }
-  getData();
+};
 
-  //google map api key: AIzaSyBHLett8djBo62dDXj0EjCimF8Rd6E8cxg
-
-//grab the first earthquake
-// grab it's title?
-//grab it's geological coordinates: latitude & longitude
-//When did it happen?
-//How many hours ago is that?
-
-//div id #info
-
-//quakes.features[0].geometry.coordinates[0] for latitude
-//quakes.features[0].geometry.coordinates[1] for longitude
-//title: features[0].properties.title
-});
+function onError(){
+  console.log ("Sorry, error.");
+}
+}); //closing jQuery onReady
 
 function createMap(){
+var myLatLng = {lat: 37.78, lng: -122.44};
   map = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: 37.78, lng: -122.44},
+    center: myLatLng,
     zoom: 1
+    });
+  };
+
+function dropPins(latLongQuakes, pinTitle){
+var marker = new google.maps.Marker({
+          position: latLongQuakes,
+          map: map,
+          title: pinTitle,
   });
-}
+};
